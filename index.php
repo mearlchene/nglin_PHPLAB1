@@ -13,7 +13,7 @@ $revenue = $revRow['s'];
 <head>
   <meta charset="utf-8">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="/NGLIN_ASSESS1/style.css">
+    <link rel="stylesheet" href="/NGLIN_ASSESS1/style.css">
 </head>
 <body>
 <?php include "nav.php"; ?>
@@ -29,8 +29,8 @@ $revenue = $revRow['s'];
  
 <p>
   Quick links:
-  <a href="/NGLIN_ASSESS1/clients_add.php">Add Client</a> |
-  <a href="/NGLIN_ASSESS1/bookings_create.php">Create Booking</a>
+  <a href="./clients_add.php">Add Client</a> |
+  <a href="./bookings_create.php">Create Booking</a>
 
 </p>
  

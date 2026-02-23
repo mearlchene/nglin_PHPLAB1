@@ -18,17 +18,27 @@ include "db.php";
   <tr>
     <th>ID</th>
     <th>Service Name</th>
+    <th>Description</th>
     <th>Price</th>
+    <th>Status</th>
+    <th>Created At</th>
   </tr>
 
 <?php
-$result = mysqli_query($conn, "SELECT * FROM services");
+$result = mysqli_query($conn, "SELECT * FROM services ORDER BY service_id DESC");
+
+if (!$result) {
+    die("SQL Error: " . mysqli_error($conn));
+}
 
 while ($row = mysqli_fetch_assoc($result)) {
   echo "<tr>";
-  echo "<td>".$row['id']."</td>";
+  echo "<td>".$row['service_id']."</td>";
   echo "<td>".$row['service_name']."</td>";
-  echo "<td>₱".number_format($row['price'],2)."</td>";
+  echo "<td>".$row['description']."</td>";
+  echo "<td>₱".number_format($row['hourly_rate'],2)."</td>";
+  echo "<td>".$row['is_active'] ? 'Active' : 'Inactive'."</td>";
+  echo "<td>".$row['created_at']."</td>";
   echo "</tr>";
 }
 ?>

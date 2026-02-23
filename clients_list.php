@@ -1,39 +1,45 @@
 <?php
 include "db.php";
+$result = mysqli_query($conn, "SELECT * FROM clients ORDER BY client_id DESC");
 ?>
 
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Clients</title>
+    <meta charset="utf-8">
+    <title>Clients</title>
 </head>
 <body>
 
-<h2>Clients List</h2>
-
 <?php include "nav.php"; ?>
 
+<h2>Clients</h2>
+<p><a href="clients_add.php">+ Add Client</a></p>
+
 <table border="1" cellpadding="10">
-  <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Contact</th>
-    <th>Email</th>
-  </tr>
+    <tr>
+        <th>Client-ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Created At</th>
+        <th>Actions</th>
+    </tr>
 
-<?php
-$result = mysqli_query($conn, "SELECT * FROM clients");
-
-while ($row = mysqli_fetch_assoc($result)) {
-  echo "<tr>";
-  echo "<td>".$row['id']."</td>";
-  echo "<td>".$row['name']."</td>";
-  echo "<td>".$row['contact']."</td>";
-  echo "<td>".$row['email']."</td>";
-  echo "</tr>";
-}
-?>
+    <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr>
+            <td><?php echo $row['client_id']; ?></td>
+            <td><?php echo $row['full_name']; ?></td>
+            <td><?php echo $row['email']; ?></td>
+            <td><?php echo $row['phone']; ?></td>
+            <td><?php echo $row['address']; ?></td>
+            <td><?php echo $row['created_at']; ?></td>
+            <td>
+                <a href="clients_edit.php?id=<?php echo $row['client_id']; ?>">Edit</a>
+            </td>
+        </tr>
+    <?php } ?>
 
 </table>
 
