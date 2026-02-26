@@ -1,67 +1,60 @@
 <?php
 include "db.php";
-
-if (isset($_POST['save'])) {
-  $booking_id = $_POST['booking_id'];
+ 
+$clients = mysqli_query($conn, "SELECT * FROM clients ORDER BY full_name ASC");
+$services = mysqli_query($conn, "SELECT * FROM services WHERE is_active=1 ORDER BY service_name ASC");
+ 
+if (isset($_POST['create'])) {
   $client_id = $_POST['client_id'];
   $service_id = $_POST['service_id'];
-  $date = $_POST['booking_date'];
-  $hrs = $_POST['hours'];
-  $rate = $_POST['hourly_rate_snapshot'];
-  $total = $_POST['total_cost'];
-  $status = $_POST['status'];
-  $createadtat = $_POST['created_at'];
-
-  mysqli_query($conn, "INSERT INTO bookings (booking_id, client_id, service_id, booking_date, hours, hourly_rate_snapshot, total_cost, status, created_at)
-                       VALUES ('$booking_id', '$client_id', '$service_id', '$date', '$hrs', '$rate', '$total', '$status', '$createadtat')");
-
+  $booking_date = $_POST['booking_date'];
+  $hours = $_POST['hours'];
+ 
+  // get service hourly rate
+  $s = mysqli_fetch_assoc(mysqli_query($conn, "SELECT hourly_rate FROM services WHERE service_id=$service_id"));
+  $rate = $s['hourly_rate'];
+ 
+  $total = $rate * $hours;
+ 
+  mysqli_query($conn, "INSERT INTO bookings (client_id, service_id, booking_date, hours, hourly_rate_snapshot, total_cost, status)
+    VALUES ($client_id, $service_id, '$booking_date', $hours, $rate, $total, 'PENDING')");
+ 
   header("Location: bookings_list.php");
+  exit;
 }
 ?>
-
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Create Booking</title>
-</head>
+<head><meta charset="utf-8"><title>Create Booking</title></head>
 <body>
-
 <?php include "nav.php"; ?>
-
+ 
 <h2>Create Booking</h2>
-
-<form method="POST">
-  <label>Booking ID:</label><br>
-  <input type="number" name="booking_id" required><br><br>
-
-  <label>Client ID:</label><br>
-  <input type="number" name="client_id" required><br><br>
-
-
-  <label>Service ID:</label><br>
-  <input type="number" name="service_id" required><br><br>
-
-  <label>Booking Date:</label><br>
-  <input type="date" name="booking_date" required><br><br>
-
-  <label>Hours:</label><br>
-  <input type="number" name="hours" required><br><br>
-
-  <label>Hourly Rate:</label><br>
-  <input type="number" step="0.01" name="hourly_rate_snapshot" required><br><br>
-
-  <label>Total Cost:</label><br>
-  <input type="number" step="0.01" name="total_cost" required><br><br>
-
-  <label>Status:</label><br>
-  <input type="text" name="status" required><br><br>
-
-  <label>Created At:</label><br>
-  <input type="datetime-local" name="created_at" required><br><br>
-
-  <button type="submit" name="save">Create Booking</button>
+ 
+<form method="post">
+  <label>Client</label><br>
+  <select name="client_id">
+    <?php while($c = mysqli_fetch_assoc($clients)) { ?>
+      <option value="<?php echo $c['client_id']; ?>"><?php echo $c['full_name']; ?></option>
+    <?php } ?>
+  </select><br><br>
+ 
+  <label>Service</label><br>
+  <select name="service_id">
+    <?php while($s = mysqli_fetch_assoc($services)) { ?>
+      <option value="<?php echo $s['service_id']; ?>">
+        <?php echo $s['service_name']; ?> (₱<?php echo number_format($s['hourly_rate'],2); ?>/hr)
+      </option>
+    <?php } ?>
+  </select><br><br>
+ 
+  <label>Date</label><br>
+  <input type="date" name="booking_date"><br><br>
+ 
+  <label>Hours</label><br>
+  <input type="number" name="hours" min="1" value="1"><br><br>
+ 
+  <button type="submit" name="create">Create Booking</button>
 </form>
-
 </body>
 </html>
